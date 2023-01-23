@@ -1,4 +1,4 @@
-{% set version = "1.3.0" %}
+{% set version = "1.4.1" %}
 {% set name = "JPype1" %}
 
 package:
@@ -7,25 +7,16 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 4fc27dba89750cb0c9d692466341ce60c0fe86a16051091cb5347a37cf884151
-  patches:
-    ###########################################################
-    # Include patch for Windows Python 3.10 compiler error.   #
-    #                                                         #
-    # xref: https://github.com/jpype-project/jpype/pull/1011  #
-    ###########################################################
-    - patches/PR_1011.patch
+  sha256: dc8ee854073474ad79ae168d90c2f6893854f58936cfa18f3587cadae0d3696d
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install . -vv
-  skip: true  # [ppc64le]
+  script: {{ PYTHON }} -m pip install . -vv --no-deps
+  skip: true  # [py<37]
 
 requirements:
   build:
     - {{ compiler('cxx') }}
-    - patch     # [unix]
-    - m2-patch  # [win]
     - python
   host:
     - python
@@ -36,6 +27,7 @@ requirements:
   run:
     - python
     - typing_extensions  # [py<38]
+    - packaging
 
 test:
   imports:
@@ -49,9 +41,16 @@ about:
   home: https://github.com/jpype-project/jpype
   license: Apache-2.0
   license_file: LICENSE
+  license_family: Apache
   summary: A Python to Java bridge.
-  description: A Python to Java bridge.
-  doc_url: http://jpype.readthedocs.io/en/stable/
+  description: |
+    JPype is a Python module to provide full access to Java from within Python. It allows Python to 
+    make use of Java specific libraries, explore and visualize Java structures, develop and test Java 
+    libraries, make use of scientific computing, and much more. By enabling the use of Python for 
+    rapid prototyping and Java for strong typed production code, JPype provides a powerful 
+    environment for engineering and code development.
+  doc_url: https://jpype.readthedocs.io
+  dev_url: https://github.com/jpype-project/jpype
 
 extra:
   recipe-maintainers:
