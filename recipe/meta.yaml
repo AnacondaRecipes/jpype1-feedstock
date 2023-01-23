@@ -7,13 +7,6 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  patches:
-    ###########################################################
-    # Include patch for Windows Python 3.10 compiler error.   #
-    #                                                         #
-    # xref: https://github.com/jpype-project/jpype/pull/1011  #
-    ###########################################################
-    - patches/PR_1011.patch
   sha256: dc8ee854073474ad79ae168d90c2f6893854f58936cfa18f3587cadae0d3696d
 
 build:
@@ -24,8 +17,6 @@ build:
 requirements:
   build:
     - {{ compiler('cxx') }}
-    - patch     # [unix]
-    - m2-patch  # [win]
     - python
   host:
     - python
