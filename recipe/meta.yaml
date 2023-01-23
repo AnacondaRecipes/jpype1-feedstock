@@ -41,9 +41,16 @@ about:
   home: https://github.com/jpype-project/jpype
   license: Apache-2.0
   license_file: LICENSE
+  license_family: Apache
   summary: A Python to Java bridge.
-  description: A Python to Java bridge.
-  doc_url: http://jpype.readthedocs.io/en/stable/
+  description: |
+    JPype is a Python module to provide full access to Java from within Python. It allows Python to 
+    make use of Java specific libraries, explore and visualize Java structures, develop and test Java 
+    libraries, make use of scientific computing, and much more. By enabling the use of Python for 
+    rapid prototyping and Java for strong typed production code, JPype provides a powerful 
+    environment for engineering and code development.
+  doc_url: https://jpype.readthedocs.io
+  dev_url: https://github.com/jpype-project/jpype
 
 extra:
   recipe-maintainers:
