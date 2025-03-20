@@ -11,7 +11,9 @@ source:
 
 build:
   number: 0
-  skip: true  # [py<38]
+  skip: True  # [py<38]
+  # Missing openjdk for s390x (not supported)
+  skip: True  # [s390x]
 
 requirements:
   host:
