@@ -1,41 +1,69 @@
-{% set version = "1.4.1" %}
-{% set name = "JPype1" %}
+{% set version = "1.5.2" %}
+{% set name = "jpype1" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name|lower }}-split
   version: {{ version }}
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: dc8ee854073474ad79ae168d90c2f6893854f58936cfa18f3587cadae0d3696d
+  sha256: 74a42eccf21d30394c1832aec3985a14965fa5320da087b65029d172c0cec43b
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install . -vv --no-deps
-  skip: true  # [py<37]
+  skip: true  # [py<38]
 
 requirements:
-  build:
-    - {{ compiler('cxx') }}
-    - python
   host:
     - python
-    - pip
-    - setuptools
-    - wheel
-    # - setupext unavailable
   run:
     - python
-    - typing_extensions  # [py<38]
-    - packaging
 
-test:
-  imports:
-    - jpype
-  commands:
-    - pip check
-  requires:
-    - pip
+outputs:
+  - name: jpype1
+    script: build_jpype1.sh
+    requirements:
+      build:
+        - {{ compiler('cxx') }}
+        - python
+      host:
+        - python
+        - pip
+        - setuptools
+        - wheel
+      run:
+        - python
+        - packaging
+        - openjdk >=21
+    test:
+      imports:
+        - jpype
+      commands:
+        - pip check
+        - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+      requires:
+        - pip
+  - name: jpype1-test
+    script: build_test.sh
+    requirements:
+      build:
+        - ant
+      host:
+        - python
+      run:
+        - python
+        - {{ pin_subpackage('jpype1', exact=True) }}
+    test:
+      source_files:
+       - test
+      commands:
+        # We don't have java sql drivers required to run test_sql* tests
+        - pytest -vv test/jpypetest --checkjni --ignore-glob="test/jpypetest/test_sql*" -k "not testInvalidArgsFalse"
+      requires:
+        - python
+        - pytest
+        - pyinstaller
+        - jedi >=0.18.0
 
 about:
   home: https://github.com/jpype-project/jpype
