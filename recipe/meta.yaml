@@ -50,17 +50,23 @@ outputs:
         - ant
       host:
         - python
+        - setuptools
+        - wheel
       run:
         - python
         - {{ pin_subpackage('jpype1', exact=True) }}
     test:
       source_files:
        - test
+      imports:
+       - jpype
       commands:
+        - pip check
         # We don't have java sql drivers required to run test_sql* tests
         - pytest -vv test/jpypetest --checkjni --ignore-glob="test/jpypetest/test_sql*" -k "not testInvalidArgsFalse"
       requires:
         - python
+        - pip
         - pytest
         - pyinstaller
         - jedi >=0.18.0
@@ -86,3 +92,6 @@ extra:
     - marscher
     - mariusvniekerk
     - Thrameos
+  skip-lints:
+    # readthedocs.io is unreachable from CI and causes a linter error spam in PR
+    - invalid_url
