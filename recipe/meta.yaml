@@ -46,6 +46,9 @@ outputs:
       requires:
         - pip
   - name: jpype1-test
+    build:
+      # ant not available for osx-arm64
+      skip: True  # [arm64]
     script: build_test.sh
     requirements:
       build:
