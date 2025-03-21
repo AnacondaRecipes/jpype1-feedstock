@@ -6,8 +6,10 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 74a42eccf21d30394c1832aec3985a14965fa5320da087b65029d172c0cec43b
+  # url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  # sha256: 74a42eccf21d30394c1832aec3985a14965fa5320da087b65029d172c0cec43b
+  url: https://github.com/jpype-project/jpype/archive/refs/tags/v{{ version }}.tar.gz
+  sha265: e5bb06e49cfa3879bd29e1a4cf2b92b417ff5a5d6f5bca4fb1bc20194db150df
 
 build:
   number: 0
@@ -29,14 +31,17 @@ outputs:
       build:
         - {{ compiler('cxx') }}
         - python
+        - openjdk >=21
       host:
         - python
+        - openjdk >=21
         - pip
         - setuptools
         - wheel
       run:
         - python
         - packaging
+      run_constrained:
         - openjdk >=21
     test:
       imports:
@@ -63,21 +68,25 @@ outputs:
         - python
         - {{ pin_subpackage('jpype1', exact=True) }}
     test:
+      files:
+       - simple_test.py
       source_files:
        - test
       imports:
        - jpype
       commands:
         - pip check
+        - python simple_test.py
         # We don't have java sql drivers required to run test_sql* tests
         # test/jpypetest/test_pickle.py fails on CI (passing locally)
-        # - pytest -vv test/jpypetest --checkjni --ignore-glob="test/jpypetest/test_sql*" --ignore="test/jpypetest/test_pickle.py" -k "not testInvalidArgsFalse"
+        - pytest -vv test/jpypetest --checkjni --ignore-glob="test/jpypetest/test_sql*" -k "not testInvalidArgsFalse"
       requires:
         - python
         - pip
         - pytest
         - pyinstaller
         - jedi >=0.18.0
+        - openjdk
 
 about:
   home: https://github.com/jpype-project/jpype
