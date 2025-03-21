@@ -7,5 +7,4 @@ $PYTHON -m pip install . \
     --no-deps \
     --no-build-isolation \
     -C--global-option=build_ext \
-    -C--global-option="--enable-build-jar" \
-    -C--global-option="--enable-tracing"
+    -C--global-option="--enable-build-jar"
