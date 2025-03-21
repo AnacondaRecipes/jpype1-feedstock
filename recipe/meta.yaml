@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/jpype-project/jpype/archive/refs/tags/v{{ version }}.tar.gz
-  sha265: e5bb06e49cfa3879bd29e1a4cf2b92b417ff5a5d6f5bca4fb1bc20194db150df
+  sha256: e5bb06e49cfa3879bd29e1a4cf2b92b417ff5a5d6f5bca4fb1bc20194db150df
   patches:
     - 0001-change-javac-target.patch
 
@@ -37,7 +37,6 @@ outputs:
         - openjdk >=21
       host:
         - python
-        - openjdk >=21
         - pip
         - setuptools
         - wheel
@@ -115,3 +114,5 @@ extra:
   skip-lints:
     # readthedocs.io is unreachable from CI and causes a linter error spam in PR
     - invalid_url
+    # args are valid in build_jpype1.sh/bat
+    - pip_install_args
