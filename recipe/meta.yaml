@@ -49,6 +49,7 @@ outputs:
       files:
         - simple_test.py
         - pickle_test.py
+        - local-java.security
       imports:
         - jpype
       commands:
@@ -56,6 +57,7 @@ outputs:
         - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
         - find $JAVA_HOME -iname java.security
         - stat $PREFIX/conf/security/java.security
+        - diff local-java.security $PREFIX/conf/security/java.security
         - python simple_test.py
         - python pickle_test.py
       requires:
