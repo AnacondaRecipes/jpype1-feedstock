@@ -46,6 +46,8 @@ outputs:
       run_constrained:
         - openjdk >=21
     test:
+      source_files:
+       - test
       imports:
         - jpype
       commands:
