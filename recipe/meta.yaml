@@ -55,6 +55,7 @@ outputs:
         - pip check
         - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
         - find $JAVA_HOME -iname java.security
+        - stat $PREFIX/conf/security/java.security
         - python simple_test.py
         - python pickle_test.py
       requires:
