@@ -1,0 +1,20 @@
+diff --git a/jpype/_jvmfinder.py b/jpype/_jvmfinder.py
+index dafdaa99..51a86049 100644
+--- a/jpype/_jvmfinder.py
++++ b/jpype/_jvmfinder.py
+@@ -98,6 +98,15 @@ class JVMFinder:
+         non_supported_jvm = ('cacao', 'jamvm')
+         found_non_supported_jvm = False
+ 
++        # os.walk returns paths in arbitrary order
++        # this can result in selecting lib/lib/server/libjvm.so
++        # instead of lib/server/libjvm.so
++        # which changes java.home, making it unable to locate java.security afterwards
++        conda_preferred_jvm = os.path.join(java_home, "lib/server", self._libfile)
++        if os.path.isfile(conda_preferred_jvm):
++            return conda_preferred_jvm
++        # leaving the rest as a fallback in case user is using a different jvm
++
+         # Look for the file
+         for root, _, names in os.walk(java_home):
+             if self._libfile in names:

@@ -10,6 +10,7 @@ source:
   sha256: e5bb06e49cfa3879bd29e1a4cf2b92b417ff5a5d6f5bca4fb1bc20194db150df
   patches:
     - 0001-change-javac-target.patch
+    - 0002-fix-find_libjvm.patch
 
 build:
   number: 0
