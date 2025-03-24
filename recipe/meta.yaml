@@ -51,8 +51,11 @@ outputs:
       commands:
         - pip check
         - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+        - pytest -vv test/jpypetest/test_pickle.py
       requires:
         - pip
+        - pytest
+        - openjdk >=21
   - name: jpype1-test
     build:
       # ant not available for osx-arm64
@@ -81,7 +84,7 @@ outputs:
         - python simple_test.py
         # We don't have java sql drivers required to run test_sql* tests
         # test/jpypetest/test_pickle.py fails on CI (passing locally)
-        - pytest -vv test/jpypetest --checkjni --ignore-glob="test/jpypetest/test_sql*" -k "not testInvalidArgsFalse"
+        - pytest -vv test/jpypetest --checkjni --ignore-glob="test/jpypetest/test_sql*" --ignore="test/jpypetest/test_pickle.py" -k "not (testInvalidArgsFalse or testSerialize)"
       requires:
         - python
         - pip
