@@ -58,6 +58,7 @@ outputs:
         - find $JAVA_HOME -iname java.security
         - stat $PREFIX/conf/security/java.security
         - diff local-java.security $PREFIX/conf/security/java.security
+        - java -XshowSettings:properties -version
         - python simple_test.py
         - python pickle_test.py
       requires:
