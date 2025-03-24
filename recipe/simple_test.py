@@ -1,3 +1,5 @@
+# A snippet code from customer
+
 import jpype
 
 jpype.startJVM()
