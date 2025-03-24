@@ -9,10 +9,12 @@ import jpype
 from jpype import java
 from jpype.pickle import JPickler, JUnpickler
 
+jpype.startJVM()
+
 print(jpype.getDefaultJVMPath())
 print(jpype.getClassPath())
+print(jpype.java.lang.System.getProperty("java.home"))
 
-jpype.startJVM()
 filename = "test.pic"
 try:
     s = java.lang.String("test")
