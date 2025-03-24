@@ -56,6 +56,7 @@ outputs:
         - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
         - python simple_test.py
         - python pickle_test.py
+        - find $JAVA_HOME java.security
       requires:
         - pip
         - python

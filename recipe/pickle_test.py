@@ -9,6 +9,9 @@ import jpype
 from jpype import java
 from jpype.pickle import JPickler, JUnpickler
 
+print(jpype.getDefaultJVMPath())
+print(jpype.getClassPath())
+
 jpype.startJVM()
 filename = "test.pic"
 try:
