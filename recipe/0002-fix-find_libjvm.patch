@@ -1,3 +1,4 @@
+# See pickle_test.py for explanation on this change
 diff --git a/jpype/_jvmfinder.py b/jpype/_jvmfinder.py
 index dafdaa99..51a86049 100644
 --- a/jpype/_jvmfinder.py

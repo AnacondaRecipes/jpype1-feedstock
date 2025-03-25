@@ -50,15 +50,11 @@ outputs:
       files:
         - simple_test.py
         - pickle_test.py
-        - local-java.security
       imports:
         - jpype
       commands:
         - pip check
         - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-        - find $JAVA_HOME -iname java.security
-        - stat $PREFIX/conf/security/java.security
-        - java -XshowSettings:properties -version
         - python simple_test.py
         - python pickle_test.py
       requires:
@@ -89,8 +85,7 @@ outputs:
       commands:
         - pip check
         # We don't have java sql drivers required to run test_sql* tests
-        # test/jpypetest/test_pickle.py fails on CI (passing locally)
-        - pytest -vv test/jpypetest --checkjni --ignore-glob="test/jpypetest/test_sql*" --ignore="test/jpypetest/test_pickle.py" -k "not (testInvalidArgsFalse or testSerialize)"
+        - pytest -vv test/jpypetest --checkjni --ignore-glob="test/jpypetest/test_sql*" -k "not (testInvalidArgsFalse)"
       requires:
         - python
         - pip
