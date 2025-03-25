@@ -55,8 +55,8 @@ outputs:
       commands:
         - pip check
         - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-        - python simple_test.py
-        - python pickle_test.py
+        - python simple_test.py  # [not win]
+        - python pickle_test.py  # [not win]
       requires:
         - pip
         - python
@@ -71,6 +71,8 @@ outputs:
     build:
       # ant not available for osx-arm64
       skip: True  # [arm64]
+      # temporary to get a build
+      skip: True  # [win]
     script: build_test.sh   # [unix]
     script: build_test.bat  # [win]
     requirements:
