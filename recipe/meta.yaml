@@ -53,7 +53,6 @@ outputs:
       imports:
         - jpype
       commands:
-        - python -c "import jpype; print(jpype.getDefaultJVMPath()); jpype.startJVM(); print(jpype.java.lang.System.getProperty("java.home"));"
         - pip check
         - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
         - python simple_test.py

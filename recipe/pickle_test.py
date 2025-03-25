@@ -16,10 +16,9 @@ import jpype
 from jpype import java
 from jpype.pickle import JPickler, JUnpickler
 
-jpype.startJVM()
-
 print(jpype.getDefaultJVMPath())
 print(jpype.getClassPath())
+jpype.startJVM()
 print(jpype.java.lang.System.getProperty("java.home"))
 
 filename = "test.pic"
