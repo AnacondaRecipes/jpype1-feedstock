@@ -63,7 +63,7 @@ outputs:
         - openjdk >=21
 
     # We don't have java sql drivers required to run test_sql* tests
-    {% set tests_to_ignore = " --ignore-glob="test/jpypetest/test_sql*""}
+    {% set tests_to_ignore = " --ignore-glob="test/jpypetest/test_sql*"" %}
     # Unstable on osx-64
     {% set tests_to_ignore = tests_to_ignore + " --ignore=test/jpypetest/test_leak.py" %}  # [osx-64]
 
