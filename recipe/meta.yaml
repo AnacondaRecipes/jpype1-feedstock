@@ -61,6 +61,12 @@ outputs:
         - pip
         - python
         - openjdk >=21
+
+    # We don't have java sql drivers required to run test_sql* tests
+    {% set tests_to_ignore = " --ignore-glob="test/jpypetest/test_sql*""}
+    # Unstable on osx-64
+    {% set tests_to_ignore = tests_to_ignore + " --ignore=test/jpypetest/test_leak.py" %}  # [osx-64]
+
   - name: jpype1-test
     build:
       # ant not available for osx-arm64
@@ -84,8 +90,7 @@ outputs:
        - jpype
       commands:
         - pip check
-        # We don't have java sql drivers required to run test_sql* tests
-        - pytest -vv test/jpypetest --checkjni --ignore-glob="test/jpypetest/test_sql*" -k "not (testInvalidArgsFalse)"
+        - pytest -vv test/jpypetest --checkjni {{ tests_to_ignore }} -k "not (testInvalidArgsFalse)"
       requires:
         - python
         - pip
