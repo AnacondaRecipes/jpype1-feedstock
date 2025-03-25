@@ -118,5 +118,3 @@ extra:
   skip-lints:
     # readthedocs.io is unreachable from CI and causes a linter error spam in PR
     - invalid_url
-    # args are valid in build_jpype1.sh/bat
-    - pip_install_args
