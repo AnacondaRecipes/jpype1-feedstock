@@ -17,6 +17,10 @@ build:
   skip: True  # [py<38]
   # Missing openjdk for s390x (not supported)
   skip: True  # [s390x]
+  # Skipping windows entirely as it's troublesome
+  # we need linux builds asap, and windows is just optional
+  # I'll try to get windows working while other platforms are in review
+  skip: True  # [win]
 
 requirements:
   build:
@@ -55,8 +59,8 @@ outputs:
       commands:
         - pip check
         - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-        - python simple_test.py  # [not win]
-        - python pickle_test.py  # [not win]
+        - python simple_test.py
+        - python pickle_test.py
       requires:
         - pip
         - python
@@ -71,8 +75,6 @@ outputs:
     build:
       # ant not available for osx-arm64
       skip: True  # [arm64]
-      # temporary to get a build
-      skip: True  # [win]
     script: build_test.sh   # [unix]
     script: build_test.bat  # [win]
     requirements:
