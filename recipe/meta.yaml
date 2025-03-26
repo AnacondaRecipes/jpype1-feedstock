@@ -128,6 +128,3 @@ extra:
     - marscher
     - mariusvniekerk
     - Thrameos
-  skip-lints:
-    # readthedocs.io is unreachable from CI and causes a linter error spam in PR
-    - invalid_url
