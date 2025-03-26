@@ -14,7 +14,7 @@ source:
     - 0002-fix-find_libjvm-windows.patch  # [win]
 
 build:
-  number: 0
+  number: 1
   skip: True  # [py<38]
   # Missing openjdk for s390x (not supported)
   skip: True  # [s390x]
