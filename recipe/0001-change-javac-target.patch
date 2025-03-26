@@ -1,0 +1,13 @@
+diff --git a/setupext/build_ext.py b/setupext/build_ext.py
+index a40ba066..e7f68f64 100644
+--- a/setupext/build_ext.py
++++ b/setupext/build_ext.py
+@@ -304,7 +304,7 @@ class BuildExtCommand(build_ext):
+         distutils.log.info(
+             "Jar cache is missing, using --enable-build-jar to recreate it.")
+ 
+-        target_version = "1.8"
++        target_version = "21"
+         # build the jar
+         try:
+             dirname = os.path.dirname(self.get_ext_fullpath("JAVA"))

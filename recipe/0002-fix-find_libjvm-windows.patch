@@ -1,0 +1,23 @@
+diff --git a/jpype/_jvmfinder.py b/jpype/_jvmfinder.py
+index dafdaa99..fdcffab0 100644
+--- a/jpype/_jvmfinder.py
++++ b/jpype/_jvmfinder.py
+@@ -98,6 +98,18 @@ class JVMFinder:
+         non_supported_jvm = ('cacao', 'jamvm')
+         found_non_supported_jvm = False
+ 
++        # os.walk returns paths in arbitrary order
++        # this can result in selecting bin/bin/server/libjvm.dll
++        # instead of bin/server/libjvm.dll
++        # which changes java.home, making it unable to start afterwards
++        # with message:
++        # Error occurred during initialization of VM
++        # Failed setting boot class path.
++        conda_preferred_jvm = os.path.join(java_home, "bin/server", self._libfile)
++        if os.path.isfile(conda_preferred_jvm):
++            return conda_preferred_jvm
++        # leaving the rest as a fallback in case user is using a different jvm
++
+         # Look for the file
+         for root, _, names in os.walk(java_home):
+             if self._libfile in names:

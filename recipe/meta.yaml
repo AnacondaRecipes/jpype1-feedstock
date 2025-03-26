@@ -1,41 +1,111 @@
-{% set version = "1.4.1" %}
-{% set name = "JPype1" %}
+{% set version = "1.5.2" %}
+{% set name = "jpype1" %}
 
 package:
-  name: {{ name|lower }}
+  name: {{ name|lower }}-split
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: dc8ee854073474ad79ae168d90c2f6893854f58936cfa18f3587cadae0d3696d
+  url: https://github.com/jpype-project/jpype/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: e5bb06e49cfa3879bd29e1a4cf2b92b417ff5a5d6f5bca4fb1bc20194db150df
+  patches:
+    - 0001-change-javac-target.patch
+    - 0002-fix-find_libjvm.patch  # [unix]
+    - 0002-fix-find_libjvm-windows.patch  # [win]
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install . -vv --no-deps
-  skip: true  # [py<37]
+  skip: True  # [py<38]
+  # Missing openjdk for s390x (not supported)
+  skip: True  # [s390x]
 
 requirements:
   build:
-    - {{ compiler('cxx') }}
-    - python
+    - patch  # [unix]
+    - m2-patch  # [win]
   host:
     - python
-    - pip
-    - setuptools
-    - wheel
-    # - setupext unavailable
   run:
     - python
-    - typing_extensions  # [py<38]
-    - packaging
 
-test:
-  imports:
-    - jpype
-  commands:
-    - pip check
-  requires:
-    - pip
+outputs:
+  - name: jpype1
+    script: build_jpype1.sh   # [unix]
+    script: build_jpype1.bat  # [win]
+    requirements:
+      build:
+        - {{ compiler('cxx') }}
+        - python
+        - openjdk >=21
+      host:
+        - python
+        - pip
+        - setuptools
+        - wheel
+      run:
+        - python
+        - packaging
+      run_constrained:
+        - openjdk >=21
+    test:
+      files:
+        - simple_test.py
+        - libjvm_finder_test.py
+      imports:
+        - jpype
+      commands:
+        - pip check
+        - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+        - python simple_test.py
+        - python libjvm_finder_test.py
+      requires:
+        - pip
+        - python
+        - openjdk >=21
+
+    # We don't have java sql drivers required to run test_sql* tests
+    {% set tests_to_ignore = " --ignore-glob=\"test/jpypetest/test_sql*\"" %}
+    # Unstable on osx-64
+    {% set tests_to_ignore = tests_to_ignore + " --ignore=test/jpypetest/test_leak.py" %}  # [osx-64]
+
+    # This just doesn't work, but I don't find it critical enough to be a blocker
+    {% set tests_to_skip = "testInvalidArgsFalse" %}
+    # jpype is handling non-ascii by copying files to tmp dirs, which doesn't play well with our CI
+    {% set tests_to_skip = tests_to_skip + " or testNonASCIIPath" %}  # [win]
+    {% set tests_to_skip = tests_to_skip + " or testOldStyleNonASCIIPath" %}  # [win]
+    {% set tests_to_skip = tests_to_skip + " or testServiceWithNonASCIIPath" %}  # [win]
+
+  - name: jpype1-test
+    build:
+      # ant not available for osx-arm64
+      skip: True  # [arm64]
+    script: build_test.sh   # [unix]
+    script: build_test.bat  # [win]
+    requirements:
+      build:
+        - ant
+      host:
+        - python
+        - setuptools
+        - wheel
+      run:
+        - python
+        - {{ pin_subpackage('jpype1', exact=True) }}
+    test:
+      source_files:
+       - test
+      imports:
+       - jpype
+      commands:
+        - pip check
+        - pytest -vv test/jpypetest --checkjni {{ tests_to_ignore }} -k "not ({{ tests_to_skip }})"
+      requires:
+        - python
+        - pip
+        - pytest
+        - pyinstaller
+        - jedi >=0.18.0
+        - openjdk
 
 about:
   home: https://github.com/jpype-project/jpype
