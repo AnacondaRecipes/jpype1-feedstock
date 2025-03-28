@@ -1,5 +1,6 @@
 {% set version = "1.5.2" %}
 {% set name = "jpype1" %}
+{% set min_openjdk_version = "11.0.13" %}
 
 package:
   name: {{ name|lower }}-split
@@ -36,7 +37,7 @@ outputs:
       build:
         - {{ compiler('cxx') }}
         - python
-        - openjdk ==21.0.6
+        - openjdk {{ min_openjdk_version }}
       host:
         - python
         - pip
@@ -45,7 +46,7 @@ outputs:
       run:
         - python
         - packaging
-        - openjdk ==21.0.6
+        - openjdk >={{ min_openjdk_version }}
     test:
       files:
         - simple_test.py
@@ -73,7 +74,7 @@ outputs:
     {% set tests_to_skip = tests_to_skip + " or testOldStyleNonASCIIPath" %}  # [win]
     {% set tests_to_skip = tests_to_skip + " or testServiceWithNonASCIIPath" %}  # [win]
 
-  - name: jpype1-test
+  - name: jpype1-test-openjdk-11
     build:
       # ant not available for osx-arm64
       skip: True  # [arm64]
@@ -82,11 +83,46 @@ outputs:
     requirements:
       build:
         - ant
+        - openjdk ==11.*
       host:
         - python
         - setuptools
         - wheel
       run:
+        - openjdk ==11.*
+        - python
+        - {{ pin_subpackage('jpype1', exact=True) }}
+    test:
+      source_files:
+       - test
+      imports:
+       - jpype
+      commands:
+        - pip check
+        - pytest -vv test/jpypetest --checkjni {{ tests_to_ignore }} -k "not ({{ tests_to_skip }})"
+      requires:
+        - python
+        - pip
+        - pytest
+        - pyinstaller
+        - jedi >=0.18.0
+
+  - name: jpype1-test-openjdk-21
+    build:
+      # ant not available for osx-arm64
+      skip: True  # [arm64]
+    script: build_test.sh   # [unix]
+    script: build_test.bat  # [win]
+    requirements:
+      build:
+        - ant
+        - openjdk ==21.*
+      host:
+        - python
+        - setuptools
+        - wheel
+      run:
+        - openjdk ==21.*
         - python
         - {{ pin_subpackage('jpype1', exact=True) }}
     test:
