@@ -37,7 +37,9 @@ outputs:
       build:
         - {{ compiler('cxx') }}
         - python
-        - openjdk {{ min_openjdk_version }}
+        - openjdk {{ min_openjdk_version }}  # [not aarch64]
+        # openjdk 11 is not available for linux-aarch64, but we can build with 21 (and support only 21)
+        - openjdk >={{ min_openjdk_version }}  # [aarch64]
       host:
         - python
         - pip
@@ -78,6 +80,8 @@ outputs:
     build:
       # ant not available for osx-arm64
       skip: True  # [arm64]
+      # openjdk 11 not available for linux-aarch64
+      skip: True  # [aarch64]
     script: build_test.sh   # [unix]
     script: build_test.bat  # [win]
     requirements:
