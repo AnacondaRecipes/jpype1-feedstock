@@ -7,7 +7,7 @@ index a40ba066..e7f68f64 100644
              "Jar cache is missing, using --enable-build-jar to recreate it.")
  
 -        target_version = "1.8"
-+        target_version = "21"
++        target_version = "11"
          # build the jar
          try:
              dirname = os.path.dirname(self.get_ext_fullpath("JAVA"))
