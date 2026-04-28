@@ -1,6 +1,12 @@
-{% set version = "1.5.2" %}
+{% set version = "1.6.0" %}
 {% set name = "jpype1" %}
 {% set min_openjdk_version = "11.0.13" %}
+{% set tests_to_ignore = ' --ignore-glob="test/jpypetest/test_sql*"' %}
+{% set tests_to_ignore = tests_to_ignore + " --ignore=test/jpypetest/test_leak.py" %}  # [osx-64]
+{% set tests_to_skip = "testInvalidArgsFalse" %}
+{% set tests_to_skip = tests_to_skip + " or testNonASCIIPath" %}  # [win]
+{% set tests_to_skip = tests_to_skip + " or testOldStyleNonASCIIPath" %}  # [win]
+{% set tests_to_skip = tests_to_skip + " or testServiceWithNonASCIIPath" %}  # [win]
 
 package:
   name: {{ name|lower }}-split
@@ -8,22 +14,20 @@ package:
 
 source:
   url: https://github.com/jpype-project/jpype/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: e5bb06e49cfa3879bd29e1a4cf2b92b417ff5a5d6f5bca4fb1bc20194db150df
+  sha256: 01673112fed9c8a16b33fcd87a8e4b116b55c4bfaf116ae8a0b2b68b496e0c26
   patches:
     - 0001-change-javac-target.patch
     - 0002-fix-find_libjvm.patch  # [unix]
     - 0002-fix-find_libjvm-windows.patch  # [win]
 
 build:
-  number: 1
-  skip: True  # [py<38]
+  number: 0
+  skip: true  # [py<38]
   # Missing openjdk for s390x (not supported)
-  skip: True  # [s390x]
+  skip: true  # [s390x]
 
 requirements:
   build:
-    - patch  # [unix]
-    - m2-patch  # [win]
   host:
     - python
   run:
@@ -31,7 +35,7 @@ requirements:
 
 outputs:
   - name: jpype1
-    script: build_jpype1.sh   # [unix]
+    script: build_jpype1.sh  # [unix]
     script: build_jpype1.bat  # [win]
     requirements:
       build:
@@ -63,26 +67,17 @@ outputs:
       requires:
         - pip
         - python
-
     # We don't have java sql drivers required to run test_sql* tests
-    {% set tests_to_ignore = " --ignore-glob=\"test/jpypetest/test_sql*\"" %}
     # Unstable on osx-64
-    {% set tests_to_ignore = tests_to_ignore + " --ignore=test/jpypetest/test_leak.py" %}  # [osx-64]
-
     # This just doesn't work, but I don't find it critical enough to be a blocker
-    {% set tests_to_skip = "testInvalidArgsFalse" %}
     # jpype is handling non-ascii by copying files to tmp dirs, which doesn't play well with our CI
-    {% set tests_to_skip = tests_to_skip + " or testNonASCIIPath" %}  # [win]
-    {% set tests_to_skip = tests_to_skip + " or testOldStyleNonASCIIPath" %}  # [win]
-    {% set tests_to_skip = tests_to_skip + " or testServiceWithNonASCIIPath" %}  # [win]
-
   - name: jpype1-test-openjdk-11
     build:
       # ant not available for osx-arm64
-      skip: True  # [arm64]
+      skip: true  # [arm64]
       # openjdk 11 not available for linux-aarch64
-      skip: True  # [aarch64]
-    script: build_test.sh   # [unix]
+      skip: true  # [aarch64]
+    script: build_test.sh  # [unix]
     script: build_test.bat  # [win]
     requirements:
       build:
@@ -98,9 +93,9 @@ outputs:
         - {{ pin_subpackage('jpype1', exact=True) }}
     test:
       source_files:
-       - test
+        - test
       imports:
-       - jpype
+        - jpype
       commands:
         - pip check
         - pytest -vv test/jpypetest --checkjni {{ tests_to_ignore }} -k "not ({{ tests_to_skip }})"
@@ -110,12 +105,11 @@ outputs:
         - pytest
         - pyinstaller
         - jedi >=0.18.0
-
   - name: jpype1-test-openjdk-21
     build:
       # ant not available for osx-arm64
-      skip: True  # [arm64]
-    script: build_test.sh   # [unix]
+      skip: true  # [arm64]
+    script: build_test.sh  # [unix]
     script: build_test.bat  # [win]
     requirements:
       build:
@@ -131,9 +125,9 @@ outputs:
         - {{ pin_subpackage('jpype1', exact=True) }}
     test:
       source_files:
-       - test
+        - test
       imports:
-       - jpype
+        - jpype
       commands:
         - pip check
         - pytest -vv test/jpypetest --checkjni {{ tests_to_ignore }} -k "not ({{ tests_to_skip }})"
@@ -151,10 +145,10 @@ about:
   license_family: Apache
   summary: A Python to Java bridge.
   description: |
-    JPype is a Python module to provide full access to Java from within Python. It allows Python to 
-    make use of Java specific libraries, explore and visualize Java structures, develop and test Java 
-    libraries, make use of scientific computing, and much more. By enabling the use of Python for 
-    rapid prototyping and Java for strong typed production code, JPype provides a powerful 
+    JPype is a Python module to provide full access to Java from within Python. It allows Python to
+    make use of Java specific libraries, explore and visualize Java structures, develop and test Java
+    libraries, make use of scientific computing, and much more. By enabling the use of Python for
+    rapid prototyping and Java for strong typed production code, JPype provides a powerful
     environment for engineering and code development.
   doc_url: https://jpype.readthedocs.io
   dev_url: https://github.com/jpype-project/jpype
@@ -165,4 +159,3 @@ extra:
     - marscher
     - mariusvniekerk
     - Thrameos
-
