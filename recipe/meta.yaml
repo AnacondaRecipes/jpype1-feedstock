@@ -16,15 +16,12 @@ source:
   url: https://github.com/jpype-project/jpype/archive/refs/tags/v{{ version }}.tar.gz
   sha256: 01673112fed9c8a16b33fcd87a8e4b116b55c4bfaf116ae8a0b2b68b496e0c26
   patches:
-    - 0001-change-javac-target.patch
     - 0002-fix-find_libjvm.patch  # [unix]
     - 0002-fix-find_libjvm-windows.patch  # [win]
 
 build:
   number: 0
   skip: true  # [py<38]
-  # Missing openjdk for s390x (not supported)
-  skip: true  # [s390x]
 
 requirements:
   build:
