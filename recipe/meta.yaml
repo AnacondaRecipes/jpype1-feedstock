@@ -36,12 +36,14 @@ outputs:
     script: build_jpype1.bat  # [win]
     requirements:
       build:
+        - {{ compiler('c') }}
         - {{ compiler('cxx') }}
         - {{ stdlib('c') }}
         - python
         - cmake
         - ninja  # [win]
         - make  # [not win]
+        - ant
         - openjdk {{ min_openjdk_version }}  # [not aarch64]
         # openjdk 11 is not available for linux-aarch64, but we can build with 21 (and support only 21)
         - openjdk >={{ min_openjdk_version }}  # [aarch64]
