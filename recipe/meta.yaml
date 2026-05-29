@@ -43,7 +43,8 @@ outputs:
         - cmake
         - ninja  # [win]
         - make  # [not win]
-        - ant
+        # ant is unavailable on osx-arm64 defaults; recipe ships org.jpype.jar for that platform.
+        - ant  # [not (osx and arm64)]
         - openjdk {{ min_openjdk_version }}  # [not aarch64]
         # openjdk 11 is not available for linux-aarch64, but we can build with 21 (and support only 21)
         - openjdk >={{ min_openjdk_version }}  # [aarch64]
