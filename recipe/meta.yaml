@@ -1,29 +1,24 @@
-{% set version = "1.5.2" %}
 {% set name = "jpype1" %}
+{% set version = "1.7.1" %}
 {% set min_openjdk_version = "11.0.13" %}
 
 package:
-  name: {{ name|lower }}-split
+  name: {{ name }}-split
   version: {{ version }}
 
 source:
-  url: https://github.com/jpype-project/jpype/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: e5bb06e49cfa3879bd29e1a4cf2b92b417ff5a5d6f5bca4fb1bc20194db150df
+  url: https://github.com/{{ name }}-project/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: 792f3ac6b67f7d9f277966a6c03d06c279f0122c7c8cd5d7ba359662236f6dd0
   patches:
-    - 0001-change-javac-target.patch
-    - 0002-fix-find_libjvm.patch  # [unix]
-    - 0002-fix-find_libjvm-windows.patch  # [win]
+    - patches/0001-change-javac-target.patch
+    - patches/0002-fix-find_libjvm.patch  # [unix]
+    - patches/0002-fix-find_libjvm-windows.patch  # [win]
 
 build:
-  number: 1
-  skip: True  # [py<38]
-  # Missing openjdk for s390x (not supported)
-  skip: True  # [s390x]
+  number: 0
+  skip: true  # [py<38]
 
 requirements:
-  build:
-    - patch  # [unix]
-    - m2-patch  # [win]
   host:
     - python
   run:
@@ -35,6 +30,7 @@ outputs:
     script: build_jpype1.bat  # [win]
     requirements:
       build:
+        - {{ stdlib('c') }}
         - {{ compiler('cxx') }}
         - python
         - openjdk {{ min_openjdk_version }}  # [not aarch64]
@@ -43,8 +39,7 @@ outputs:
       host:
         - python
         - pip
-        - setuptools
-        - wheel
+        - scikit-build-core >=0.9
       run:
         - python
         - packaging
@@ -79,9 +74,9 @@ outputs:
   - name: jpype1-test-openjdk-11
     build:
       # ant not available for osx-arm64
-      skip: True  # [arm64]
+      skip: true  # [osx and arm64]
       # openjdk 11 not available for linux-aarch64
-      skip: True  # [aarch64]
+      skip: true  # [linux and aarch64]
     script: build_test.sh   # [unix]
     script: build_test.bat  # [win]
     requirements:
@@ -114,7 +109,7 @@ outputs:
   - name: jpype1-test-openjdk-21
     build:
       # ant not available for osx-arm64
-      skip: True  # [arm64]
+      skip: true  # [osx and arm64]
     script: build_test.sh   # [unix]
     script: build_test.bat  # [win]
     requirements:
