@@ -1,12 +1,6 @@
 {% set version = "1.7.1" %}
 {% set name = "jpype1" %}
 {% set min_openjdk_version = "11.0.13" %}
-{% set tests_to_ignore = ' --ignore-glob="test/jpypetest/test_sql*"' %}
-{% set tests_to_ignore = tests_to_ignore + " --ignore=test/jpypetest/test_leak.py" %}  # [osx-64]
-{% set tests_to_skip = "testInvalidArgsFalse" %}
-{% set tests_to_skip = tests_to_skip + " or testNonASCIIPath" %}  # [win]
-{% set tests_to_skip = tests_to_skip + " or testOldStyleNonASCIIPath" %}  # [win]
-{% set tests_to_skip = tests_to_skip + " or testServiceWithNonASCIIPath" %}  # [win]
 
 package:
   name: {{ name|lower }}-split
@@ -43,8 +37,7 @@ outputs:
         - cmake
         - ninja  # [win]
         - make  # [not win]
-        # ant is unavailable on osx-arm64 defaults; recipe ships org.jpype.jar for that platform.
-        - ant  # [not (osx and arm64)]
+        - ant
         - openjdk {{ min_openjdk_version }}  # [not aarch64]
         # openjdk 11 is not available for linux-aarch64, but we can build with 21 (and support only 21)
         - openjdk >={{ min_openjdk_version }}  # [aarch64]
@@ -70,13 +63,21 @@ outputs:
       requires:
         - pip
         - python
+
     # We don't have java sql drivers required to run test_sql* tests
+    {% set tests_to_ignore = " --ignore-glob=\"test/jpypetest/test_sql*\"" %}
     # Unstable on osx-64
+    {% set tests_to_ignore = tests_to_ignore + " --ignore=test/jpypetest/test_leak.py" %}  # [osx-64]
+
+    # This just doesn't work, but I don't find it critical enough to be a blocker
+    {% set tests_to_skip = "testInvalidArgsFalse" %}
     # jpype is handling non-ascii by copying files to tmp dirs, which doesn't play well with our CI
+    {% set tests_to_skip = tests_to_skip + " or testNonASCIIPath" %}  # [win]
+    {% set tests_to_skip = tests_to_skip + " or testOldStyleNonASCIIPath" %}  # [win]
+    {% set tests_to_skip = tests_to_skip + " or testServiceWithNonASCIIPath" %}  # [win]
+
   - name: jpype1-test-openjdk-11
     build:
-      # ant not available for osx-arm64
-      skip: true  # [arm64]
       # openjdk 11 not available for linux-aarch64
       skip: true  # [aarch64]
     script: build_test.sh  # [unix]
@@ -108,9 +109,6 @@ outputs:
         - pyinstaller
         - jedi >=0.18.0
   - name: jpype1-test-openjdk-21
-    build:
-      # ant not available for osx-arm64
-      skip: true  # [arm64]
     script: build_test.sh  # [unix]
     script: build_test.bat  # [win]
     requirements:
