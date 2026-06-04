@@ -35,7 +35,7 @@ outputs:
         - {{ stdlib('c') }}
         - python
         - cmake
-        - ninja  # [win]
+        - ninja-base  # [win]
         - make  # [not win]
         - ant
         - openjdk {{ min_openjdk_version }}  # [not aarch64]
@@ -108,6 +108,7 @@ outputs:
         - pytest
         - pyinstaller
         - jedi >=0.18.0
+
   - name: jpype1-test-openjdk-21
     script: build_test.sh  # [unix]
     script: build_test.bat  # [win]
