@@ -2,3 +2,7 @@ anaconda_config_version: 1
 upstream_sources:
   - pypi:
       identifier: jpype1
+    packages:
+      - jpype1
+      - jpype1-test-openjdk-11
+      - jpype1-test-openjdk-21
