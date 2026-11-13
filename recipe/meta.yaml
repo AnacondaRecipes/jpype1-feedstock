@@ -1,6 +1,7 @@
 {% set version = "1.7.1" %}
 {% set name = "jpype1" %}
-{% set min_openjdk_version = "11.0.13" %}
+{% set min_openjdk_version = "11.0.13" %}  # [not (win and arm64)]
+{% set min_openjdk_version = "25.0.4" %}   # [win and arm64]
 
 package:
   name: {{ name|lower }}-split
@@ -12,9 +13,11 @@ source:
   patches:
     - 0002-fix-find_libjvm.patch  # [unix]
     - 0002-fix-find_libjvm-windows.patch  # [win]
+    # Backport of https://github.com/jpype-project/jpype/pull/1372 by Tom Dunkle.
+    - 0003-backport-PR-1372-win-arm64.patch  # [win]
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py<38]
 
 requirements:
@@ -77,8 +80,8 @@ outputs:
 
   - name: jpype1-test-openjdk-11
     build:
-      # openjdk 11 not available for linux-aarch64
-      skip: true  # [aarch64]
+      # openjdk 11 not available for win-arm64
+      skip: true  # [win and arm64]
     script: build_test.sh  # [unix]
     script: build_test.bat  # [win]
     requirements:
@@ -109,6 +112,9 @@ outputs:
         - jedi >=0.18.0
 
   - name: jpype1-test-openjdk-21
+    build:
+      # openjdk 21 not available for win-arm64
+      skip: true  # [win and arm64]
     script: build_test.sh  # [unix]
     script: build_test.bat  # [win]
     requirements:
@@ -121,6 +127,36 @@ outputs:
         - wheel
       run:
         - openjdk ==21.*
+        - python
+        - {{ pin_subpackage('jpype1', exact=True) }}
+    test:
+      source_files:
+        - test
+      imports:
+        - jpype
+      commands:
+        - pip check
+        - pytest -vv test/jpypetest --checkjni {{ tests_to_ignore }} -k "not ({{ tests_to_skip }})"
+      requires:
+        - python
+        - pip
+        - pytest
+        - pyinstaller
+        - jedi >=0.18.0
+
+  - name: jpype1-test-openjdk-25
+    script: build_test.sh  # [unix]
+    script: build_test.bat  # [win]
+    requirements:
+      build:
+        - ant
+        - openjdk ==25.*
+      host:
+        - python
+        - setuptools
+        - wheel
+      run:
+        - openjdk ==25.*
         - python
         - {{ pin_subpackage('jpype1', exact=True) }}
     test:
