@@ -14,7 +14,7 @@ source:
     - 0002-fix-find_libjvm-windows.patch  # [win]
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py<38]
 
 requirements:
