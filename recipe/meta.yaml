@@ -13,6 +13,8 @@ source:
   patches:
     - 0002-fix-find_libjvm.patch  # [unix]
     - 0002-fix-find_libjvm-windows.patch  # [win]
+    # Backport of https://github.com/jpype-project/jpype/pull/1372 by Tom Dunkle.
+    - 0003-backport-PR-1372-win-arm64.patch  # [win]
 
 build:
   number: 1

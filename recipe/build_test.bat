@@ -1,2 +1,2 @@
 cd test
-ant compile
+ant clean compile

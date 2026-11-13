@@ -3,4 +3,4 @@
 set -ex
 
 cd test
-ant compile
+ant clean compile
