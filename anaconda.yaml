@@ -6,3 +6,4 @@ upstream_sources:
       - jpype1
       - jpype1-test-openjdk-11
       - jpype1-test-openjdk-21
+      - jpype1-test-openjdk-25

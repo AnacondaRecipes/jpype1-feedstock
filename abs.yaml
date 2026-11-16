@@ -1,3 +1,8 @@
 build_env_vars:
   ANACONDA_ROCKET_ENABLE_PY315: yes
+# Serialize platform renders. Every render downloads each output's pinned openjdk (11, 21 and 25) to read
+# its pin files, so 5 concurrent platforms each pulled ~3 JDKs plus python tarballs and the render workers
+# failed. Renders take ~50-60 s/platform, so serial is ~5 min and stays inside the 15-min Lambda cap
+# (render_workers: 2 is the fallback). Workaround from the Oct 2026 goalie notes; the durable fix is
+# PBP-side (SIR-2748, SIR-3816).
 render_workers: 1
