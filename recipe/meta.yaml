@@ -17,7 +17,7 @@ source:
     - 0003-backport-PR-1372-win-arm64.patch  # [win]
 
 build:
-  number: 1
+  number: 2
   skip: true  # [py<38]
 
 requirements:
